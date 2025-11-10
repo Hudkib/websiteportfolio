@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hudson Kibera - Graphic Designer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.5);
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.2s ease;
+            mix-blend-mode: difference;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.8);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(124, 58, 237, 0.15), transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(102, 126, 234, 0.15), transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.4s both;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+
+        section {
+            padding: 5rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            position: relative;
+            aspect-ratio: 4/3;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover {
+            transform: scale(1.05);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            transform: translateY(0);
+        }
+
+        .portfolio-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-overlay p {
+            color: #a0a0a0;
+        }
+
+        /* Project Details Modal */
+        .project-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            max-width: 1000px;
+            margin: 2rem auto;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            animation: modalFadeIn 0.5s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            padding: 3rem 3rem 0;
+        }
+
+        .modal-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header p {
+            color: #a0a0a0;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 3rem;
+        }
+
+        .project-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .project-description h3,
+        .project-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .project-description p {
+            line-height: 1.8;
+            color: #d0d0d0;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-info ul {
+            list-style: none;
+        }
+
+        .project-info li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #d0d0d0;
+        }
+
+        .project-info li:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #a78bfa;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .project-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d0d0d0;
+            margin-bottom: 1.5rem;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            padding: 0.7rem 1.5rem;
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+            border-radius: 25px;
+            color: #a78bfa;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(124, 58, 237, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover .profile-image {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-image:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-overlay-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0a0;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            color: #a0a0a0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: #ffffff;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #7c3aed;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 2rem;
+            }
+
+            section {
+                padding: 3rem 2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                gap: 1rem;
+            }
+
+            .project-details {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-follower"></div>
+
+    <header>
+        <div class="logo">HK</div>
+        <nav>
+            <a href="#portfolio">Work</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>Hudson Kibera</h1>
+            <p>Creative Graphic Designer & Visual Storyteller</p>
+            <a href="#portfolio" class="cta-button">View My Work</a>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <h2>Selected Work</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item" id="nutrition-ninja-item">
+                <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80" alt="Nutrition Ninja" id="nutrition-img">
+                <div class="portfolio-overlay">
+                    <h3>Nutrition Ninja</h3>
+                    <p>Social media graphics and content design for wellness brand</p>
+                </div>
+            </div>
+            <div class="portfolio-item" id="threeft-item">
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80" alt="Threeft Bazaar">
+                <div class="portfolio-overlay">
+                    <h3>Threeft Bazaar</h3>
+                    <p>E-commerce website design and complete brand identity</p>
+                    <span style="display: inline-block; margin-top: 0.5rem; color: #7c3aed; font-weight: 600;">View Details →</span>
+                </div>
+            </div>
+            <div class="portfolio-item" id="dupont-item">
+                <img src="https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80" alt="Dupont Paints">
+                <div class="portfolio-overlay">
+                    <h3>Dupont Paints</h3>
+                    <p>Corporate website design and digital presence</p>
+                    <span style="display: inline-block; margin-top: 0.5rem; color: #7c3aed; font-weight: 600;">View Details →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Detail Modals -->
+    <div class="project-modal" id="nutrition-modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal('nutrition-modal')">✕</div>
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&q=80" alt="Nutrition Ninja" class="modal-image">
+            <div class="modal-header">
+                <h2>Nutrition Ninja</h2>
+                <p>Social media graphics and content design for wellness brand</p>
+            </div>
+            <div class="modal-body">
+                <div class="project-details">
+                    <div class="project-description">
+                        <h3>Project Overview</h3>
+                        <p>Nutrition Ninja is a wellness brand focused on providing accessible nutrition education through social media. The challenge was to create engaging, educational content that would stand out in crowded social feeds while maintaining a consistent brand identity.</p>
+                        <p>I developed a comprehensive visual identity system including color palette, typography, and illustration style. The design approach focused on creating "snackable" content that could convey complex nutritional information in an easily digestible format.</p>
+                        <p>The project included designing Instagram templates, infographics, story highlights, and a content strategy that increased engagement by 45% within the first three months.</p>
+                    </div>
+                    <div class="project-info">
+                        <h3>Project Details</h3>
+                        <ul>
+                            <li><span class="info-label">Client:</span> Nutrition Ninja</li>
+                            <li><span class="info-label">Year:</span> 2023</li>
+                            <li><span class="info-label">Services:</span> Social Media Design, Brand Identity, Content Strategy</li>
+                            <li><span class="info-label">Tools:</span> Adobe Illustrator, Photoshop, After Effects</li>
+                            <li><span class="info-label">Duration:</span> 3 months</li>
+                             <li><span class="info-label">Social Media Page:</span> <a href="https://www.instagram.com/_nutrition_ninja?igsh=MzRlODBiNWFlZA==" target="_blank" style="color: #7c3aed;">instagram.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="project-gallery">
+                    <div class="gallery-item">
+                        <img src="img/ramadhan.jpeg" alt="Nutrition Ninja Instagram Post">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="img/eid.jpeg" alt="Nutrition Ninja Infographic">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="img/aldha.jpeg" alt="Nutrition Ninja Brand Elements">
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="project-modal" id="threeft-modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal('threeft-modal')">✕</div>
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80" alt="Threeft Bazaar" class="modal-image">
+            <div class="modal-header">
+                <h2>Threeft Bazaar</h2>
+                <p>E-commerce website design and complete brand identity</p>
+            </div>
+            <div class="modal-body">
+                <div class="project-details">
+                    <div class="project-description">
+                        <h3>Project Overview</h3>
+                        <p>Threeft Bazaar is an online marketplace for unique, handcrafted goods from local artisans. The project required creating a complete brand identity and e-commerce website that would showcase the uniqueness of each product while providing a seamless shopping experience.</p>
+                        <p>I developed a warm, inviting color palette and typography system that reflected the handmade nature of the products. The website design focused on creating visual hierarchy that highlighted product photography while maintaining intuitive navigation.</p>
+                        <p>The project included logo design, brand guidelines, website UI/UX design, and marketing collateral. The new design resulted in a 30% increase in conversion rates and significantly reduced bounce rates.</p>
+                    </div>
+                    <div class="project-info">
+                        <h3>Project Details</h3>
+                        <ul>
+                            <li><span class="info-label">Client:</span> Threeft Bazaar</li>
+                            <li><span class="info-label">Year:</span> 2023</li>
+                            <li><span class="info-label">Services:</span> Brand Identity, Web Design, UI/UX, E-commerce</li>
+                            <li><span class="info-label">Tools:</span> Figma, Adobe Creative Suite, Webflow</li>
+                            <li><span class="info-label">Duration:</span> 4 months</li>
+                            <li><span class="info-label">Website:</span> <a href="https://www.threeft.co.ke/" target="_blank" style="color: #7c3aed;">threeft.co.ke</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Gallery removed for Threeft Bazaar -->
+            </div>
+        </div>
+    </div>
+
+    <div class="project-modal" id="dupont-modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal('dupont-modal')">✕</div>
+            <img src="https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=1200&q=80" alt="Dupont Paints" class="modal-image">
+            <div class="modal-header">
+                <h2>Dupont Paints</h2>
+                <p>Corporate website design and digital presence</p>
+            </div>
+            <div class="modal-body">
+                <div class="project-details">
+                    <div class="project-description">
+                        <h3>Project Overview</h3>
+                        <p>Dupont Paints is an established paint manufacturer looking to modernize their digital presence. The goal was to create a corporate website that reflected their industry leadership while making their extensive product catalog easily accessible to both trade professionals and consumers.</p>
+                        <p>I designed a clean, professional interface with a focus on color visualization tools and product discovery. The design system incorporated their existing brand colors while introducing modern UI patterns that improved usability.</p>
+                        <p>The project included website redesign, product catalog organization, color selector tool design, and responsive implementation. The new website improved user engagement metrics by 60% and significantly increased online inquiries from trade professionals.</p>
+                    </div>
+                    <div class="project-info">
+                        <h3>Project Details</h3>
+                        <ul>
+                            <li><span class="info-label">Client:</span> Dupont Paints</li>
+                            <li><span class="info-label">Year:</span> 2022</li>
+                            <li><span class="info-label">Services:</span> Web Design, UI/UX, Corporate Branding</li>
+                            <li><span class="info-label">Tools:</span> Figma, Adobe XD, WordPress</li>
+                            <li><span class="info-label">Duration:</span> 5 months</li>
+                            <li><span class="info-label">Website:</span> <a href="https://www.dupontpaints.co.ke/" target="_blank" style="color: #7c3aed;">dupontpaints.co.ke</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Gallery removed for Dupont Paints -->
+            </div>
+        </div>
+    </div>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>I'm a graphic designer with over 3 years of experience creating compelling visual identities and design solutions. My work spans brand identity, social media graphics, website building, and digital experiences.</p>
+                <p>I believe great design is the intersection of aesthetics, strategy, and storytelling. Every project is an opportunity to craft something meaningful that resonates with audiences and drives results.</p>
+                <div class="skills">
+                    <span class="skill-tag">Social Media Graphics</span>
+                    <span class="skill-tag">Website Building</span>
+                    <span class="skill-tag">Adobe Creative Suite</span>
+                    <span class="skill-tag">Figma</span>
+                    <span class="skill-tag">Web Development</span>
+                </div>
+            </div>
+            <div class="about-image">
+                <img src="img/prof.jpeg" alt="Hudson Kibera" class="profile-image">
+                <div class="image-overlay">
+                    <div class="image-overlay-text">Creative Designer<br>& Visual Storyteller</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Let's Work Together</h2>
+        <form class="contact-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            <button type="submit" class="cta-button">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Hudson Kibera. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#" title="Instagram">📷</a>
+            <a href="#" title="Behance">🎨</a>
+            <a href="#" title="LinkedIn">💼</a>
+            <a href="#" title="Dribbble">🏀</a>
+        </div>
+    </footer>
+
+    <script>
+        // Custom cursor follower
+        const cursorFollower = document.querySelector('.cursor-follower');
+        document.addEventListener('mousemove', (e) => {
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Form submission
+        document.querySelector('.contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for your message! I\'ll get back to you soon.');
+            e.target.reset();
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.portfolio-item, .about-content, .contact-form').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Project Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add click events to portfolio items
+        document.getElementById('nutrition-ninja-item').addEventListener('click', () => {
+            openModal('nutrition-modal');
+        });
+
+        document.getElementById('threeft-item').addEventListener('click', () => {
+            openModal('threeft-modal');
+        });
+
+        document.getElementById('dupont-item').addEventListener('click', () => {
+            openModal('dupont-modal');
+        });
+
+        // Close modal when clicking outside content
+        document.querySelectorAll('.project-modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
